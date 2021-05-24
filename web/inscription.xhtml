@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Inscription page</title>
+    </h:head>
+    <h:body>
+        <p:growl id="growl" showDetail="true" life="3000" />
+        <h:form>
+            
+            <p:panel>   
+                <center><h1>Inscription</h1></center>
+            </p:panel>   
+            <br/>
+            
+            <center>
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <h:outputLabel value="Login :"/>
+                    <p:inputText id="login" value="#{inscriptionBean.login}" required="true"/>
+                    
+                    <h:outputLabel value="Mot de Passe :"/>
+                    <p:password id="mdp" value="#{inscriptionBean.mdp}" required="true"/>
+                    
+                    <h:outputLabel value="Nom :"/>
+                    <p:inputText id="nom" value="#{inscriptionBean.nom}" required="true"/>
+                    
+                    <h:outputLabel value="Prénom :"/>
+                    <p:inputText id="prenom" value="#{inscriptionBean.prenom}" required="true"/>
+                    
+                    <h:outputLabel value="Age :"/>
+                    <p:inputText id="age" value="#{inscriptionBean.age}" required="true"/>
+                    
+                    <h:outputLabel value="Adresse :"/>
+                    <p:inputText id="adresse" value="#{inscriptionBean.adresse}" required="true"/>
+
+
+                </h:panelGrid>
+                <p:commandButton update="growl" value="Inscription"  actionListener="#{inscriptionBean.onClick()}"/>
+                <a>    </a>
+                <p:button value="Retour" outcome="index"/>
+            </center>
+            
+        </h:form>
+    </h:body>
+</html>

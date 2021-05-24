@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Angel Mechanics Admin Page</title>
+    </h:head>
+    <h:body>
+
+        <p:growl id="growl" showDetail="true" life="3000" />
+        <h:form id="form">
+
+            <p:panel>   
+                <center><h1>Bienvenue Hiérarque</h1></center>
+            </p:panel>   
+            <br/>
+
+            <center>
+                <h:panelGrid columns="3" cellpadding="5">
+
+                    <p:button value="Gestion Voiture" outcome="adminPageVoiture"/>
+                    <p:button value="Gestion Commande" outcome="adminPageCommande"/>
+                    <p:button value="Déconnexion" outcome="index"/>
+
+                </h:panelGrid>
+                
+                <h:panelGrid columns="3" cellpadding="5">
+
+                    <p:commandButton value="Ajouter Administrateur" type="button" onclick="PF('ajoutclient').show();" />
+
+                    <p:commandButton value="Modifier Client" onclick="PF('modifclient').show();" process="clientsTable" update=":formmodif:clientDetail"/>
+
+                    <p:commandButton value="Supprimer Client" onclick="PF('supprclient').show();" process="clientsTable" update=":formSuppr:clientSuppr"/>
+
+                </h:panelGrid>
+
+
+            </center>
+            
+            <p:panel header="Option de filtrage" style="margin-bottom:10px;">
+
+                <h:panelGrid columns="9" cellpadding="5">
+
+                    <p:outputLabel for="nom"  value="Nom : " />
+                    <p:selectOneMenu id="nom" value="#{adminBeanClient.nom}" style="width:150px" >  
+                        <p:ajax listener="#{adminBeanClient.onNomChange()}" update="clientsTable"/>
+                        <f:selectItem itemLabel="Tous" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{adminBeanClient.noms}" />  
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="prenom"  value="Prénom : " />
+                    <p:selectOneMenu id="prenom" value="#{adminBeanClient.prenom}" style="width:150px" >  
+                        <p:ajax listener="#{adminBeanClient.onPrenomChange()}" update="clientsTable"/>
+                        <f:selectItem itemLabel="Tous" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{adminBeanClient.prenoms}" />  
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+
+            </p:panel>
+            
+            <p:panel>                    
+                <p:dataTable id="clientsTable" var="client" value="#{adminBeanClient.clients}" rows="5" paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" selection="#{adminBeanClient.selectedClient}" rowKey="#{client.id}">
+
+                    <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                    <p:column headerText="Nom :" width="250" sortBy="#{client.nom}">
+                        <h:outputText value="#{client.nom}"/>
+                    </p:column>
+                    <p:column headerText="Prénom :" width="130">
+                        <h:outputText value="#{client.prenom}"/>
+                    </p:column>
+                    <p:column headerText="Age :" width="300">
+                        <h:outputText value="#{client.age}"/>
+                    </p:column>
+                    <p:column headerText="Adresse :" sortBy="#{client.adresse}" width="350">
+                        <h:outputText value="#{client.adresse}"/>
+                    </p:column>
+                    <p:column headerText="Login :" sortBy="#{client.login}" width="110">
+                        <h:outputText value="#{client.login}"/>
+                    </p:column>
+                    <p:column headerText="Mot de Passe :" sortBy="#{client.mdp}">
+                        <h:outputText value="#{client.mdp}"/>
+                    </p:column>
+                    <p:column headerText="Administrateur :" sortBy="#{client.administrator}">
+                        <h:outputText value="#{client.administrator}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+        
+        <p:dialog header="Ajout de client" widgetVar="ajoutclient" showEffect="bounce" hideEffect="explode" height="400" width="500">
+            <h:form>
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <h:outputLabel value="Nom :"/>
+                    <p:inputText id="nom" value="#{adminBeanClient.client.nom}" required="true"/>
+
+                    <h:outputLabel value="Prénom :"/>
+                    <p:inputText id="prenom" value="#{adminBeanClient.client.prenom}" required="true"/>
+
+                    <h:outputLabel value="Age :"/>
+                    <p:inputText id="age" value="#{adminBeanClient.client.age}" required="true"/>
+
+                    <h:outputLabel value="Adresse :"/>
+                    <p:inputText id="adresse" value="#{adminBeanClient.client.adresse}" required="true"/>
+
+                    <h:outputLabel value="Login :"/>
+                    <p:inputText id="login" value="#{adminBeanClient.client.login}" required="true"/>
+
+                    <h:outputLabel value="Mot de Passe :"/>
+                    <p:inputText id="mdp" value="#{adminBeanClient.client.mdp}" required="true"/>
+
+                </h:panelGrid>
+                <br/>
+                <p:commandButton update="growl" value="Ajouter" actionListener="#{adminBeanClient.ajoutAdmin()}" oncomplete="PF('ajoutclient').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Suppression de Client" widgetVar="supprclient" showEffect="bounce" hideEffect="explode">
+            <h:form id="formSuppr">
+                <p:outputPanel id="clientSuppr" style="text-align:center;">
+                    <h:panelGrid  columns="2" cellpadding="5">
+
+                        <h:outputLabel value="Id :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.id}" />
+
+
+                        <h:outputLabel value="Nom :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.nom}" />
+
+
+                        <h:outputLabel value="Prénom :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.prenom}"/>
+
+
+                        <h:outputLabel value="Age :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.age}" />
+
+
+                        <h:outputLabel value="Adresse :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.adresse}" />
+
+
+                        <h:outputLabel value="Administrateur :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.administrator}" />
+
+
+                        <h:outputLabel value="Login :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.login}"/>
+
+
+                        <h:outputLabel value="Mot de Passe :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.mdp}" />
+
+                    </h:panelGrid>
+                </p:outputPanel>
+                <br/>
+                <p:commandButton update="growl" value="Supprimer" actionListener="#{adminBeanClient.supprClient()}" oncomplete="PF('supprclient').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Modification de Client" widgetVar="modifclient" showEffect="bounce" hideEffect="explode">
+            <h:form id="formmodif">
+                <p:outputPanel id="clientDetail" style="text-align:center;">
+                    <h:panelGrid  columns="3" cellpadding="5">
+
+                        <h:outputLabel value="Id :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.id}" />
+                        <p:inputText id="Id" value="#{adminBeanClient.client.id}"/>
+
+                        <h:outputLabel value="Nom :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.nom}" />
+                        <p:inputText id="nom" value="#{adminBeanClient.client.nom}" />
+
+                        <h:outputLabel value="Prénom :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.prenom}"/>
+                        <p:inputText id="prenom" value="#{adminBeanClient.client.prenom}" />
+
+                        <h:outputLabel value="Age :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.age}" />
+                        <p:inputText id="age" value="#{adminBeanClient.client.age}" />
+
+                        <h:outputLabel value="Adresse :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.adresse}" />
+                        <p:inputText id="adresse" value="#{adminBeanClient.client.adresse}" />
+
+                        <h:outputLabel value="Administrateur :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.administrator}" />
+                        <p:inputText id="administrateur" value="#{adminBeanClient.client.administrator}" />
+
+                        <h:outputLabel value="Login :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.login}"/>
+                        <p:inputText id="login" value="#{adminBeanClient.client.login}"/>
+
+                        <h:outputLabel value="Mot de Passe :" />
+                        <p:outputLabel value="#{adminBeanClient.selectedClient.mdp}" />
+                        <p:inputText id="mdp" value="#{adminBeanClient.client.mdp}" />
+
+                    </h:panelGrid>
+                </p:outputPanel>
+                <br/>
+                <p:commandButton update="growl" value="Modifier" actionListener="#{adminBeanClient.modifClient()}" oncomplete="PF('modifclient').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+        
+    </h:body>
+</html>

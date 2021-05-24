@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Angel Mechanics Admin Page</title>
+    </h:head>
+    <h:body>
+
+        <p:growl id="growl" showDetail="true" life="3000" />
+        <h:form id="form">
+
+            <p:panel>   
+                <center><h1>Bienvenue #{login.clientPrenom}</h1></center>
+            </p:panel>   
+            <br/>
+
+            <center>
+                <h:panelGrid columns="3" cellpadding="5">
+
+                    <p:button value="Gestion Client" outcome="adminPageClient"/>
+                    <p:button value="Gestion Commande" outcome="adminPageCommande"/>
+                    <p:button value="Déconnexion" outcome="index"/>
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="3" cellpadding="5">
+
+                    <p:commandButton value="Ajouter Voiture" type="button" onclick="PF('ajoutvoiture').show();" />
+
+                    <p:commandButton value="Modifier Voiture" onclick="PF('modifvoiture').show();" process="voituresTable" update=":formmodif:carDetail"/>
+
+                    <p:commandButton value="Supprimer Voiture" onclick="PF('supprvoiture').show();" process="voituresTable" update=":formSuppr:carSuppr"/>
+
+                </h:panelGrid>
+
+
+            </center>
+
+            <p:panel header="Option de filtrage" style="margin-bottom:10px;">
+
+                <h:panelGrid columns="9" cellpadding="5">
+
+                    <p:outputLabel for="categorie"  value="Catégorie : " />
+                    <p:selectOneMenu id="categorie" value="#{userBean.categorie}" style="width:150px" >  
+                        <p:ajax listener="#{userBean.onCategorieChange()}" update="voituresTable"/>
+                        <f:selectItem itemLabel="Tous" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{userBean.categories}" />  
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="annee"  value="Année : " />
+                    <p:selectOneMenu id="annee" value="#{userBean.annee}" style="width:150px" >  
+                        <p:ajax listener="#{userBean.onAnneeChange()}" update="voituresTable"/>
+                        <f:selectItem itemLabel="Tous" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{userBean.annees}" />  
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="marque"  value="Marque : " />
+                    <p:selectOneMenu id="marque" value="#{userBean.marque}" style="width:150px" >  
+                        <p:ajax listener="#{userBean.onMarqueChange()}" update="voituresTable"/>
+                        <f:selectItem itemLabel="Tous" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{userBean.marques}" />  
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+
+            </p:panel>
+
+            <br/>
+
+            <p:panel>                    
+                <p:dataTable id="voituresTable" var="voiture" value="#{userBean.voitures}" rows="5" paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" selection="#{adminBeanVoiture.selectedVoiture}" rowKey="#{voiture.id}">
+
+                    <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                    <p:column headerText="Marque" width="100" sortBy="#{voiture.marque}">
+                        <h:outputText value="#{voiture.marque}"/>
+                    </p:column>
+                    <p:column headerText="Modèle" width="100">
+                        <h:outputText value="#{voiture.modele}"/>
+                    </p:column>
+                    <p:column headerText="Image" width="300">
+                        <h:graphicImage value="#{voiture.backdrop}" width="100%" height="30%"/>
+                    </p:column>
+                    <p:column headerText="Motorisation" sortBy="#{voiture.motorisation}" >
+                        <h:outputText value="#{voiture.motorisation}"/>
+                    </p:column>
+                    <p:column headerText="Puissance (ch)" sortBy="#{voiture.puissance}" >
+                        <h:outputText value="#{voiture.puissance}"/>
+                    </p:column>
+                    <p:column headerText="Catégorie" sortBy="#{voiture.categorie}" width="200">
+                        <h:outputText value="#{voiture.categorie}"/>
+                    </p:column>
+                    <p:column headerText="Année" sortBy="#{voiture.anneeDeSortie}" width="100">
+                        <h:outputText value="#{voiture.anneeDeSortie}"/>
+                    </p:column>
+                    <p:column headerText="Prix (en €)" sortBy="#{voiture.prix}" width="100">
+                        <h:outputText value="#{voiture.prix}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+
+        <p:dialog header="Modification de Voiture" widgetVar="modifvoiture" showEffect="bounce" hideEffect="explode">
+            <h:form id="formmodif">
+                <p:outputPanel id="carDetail" style="text-align:center;">
+                    <h:panelGrid  columns="3" cellpadding="5">
+
+                        <h:outputLabel value="Id :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.id}" />
+                        <p:inputText id="Id" value="#{adminBeanVoiture.voiture.id}"/>
+
+                        <h:outputLabel value="Marque :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.marque}" />
+                        <p:inputText id="marque" value="#{adminBeanVoiture.voiture.marque}" />
+
+                        <h:outputLabel value="Modèle :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.modele}"/>
+                        <p:inputText id="modele" value="#{adminBeanVoiture.voiture.modele}" />
+
+                        <h:outputLabel value="Image :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.backdrop}" />
+                        <p:inputText id="image" value="#{adminBeanVoiture.voiture.backdrop}" />
+
+                        <h:outputLabel value="Motorisation :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.motorisation}" />
+                        <p:inputText id="motorisation" value="#{adminBeanVoiture.voiture.motorisation}" />
+
+                        <h:outputLabel value="Puissance :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.puissance}" />
+                        <p:inputText id="puissance" value="#{adminBeanVoiture.voiture.puissance}" />
+
+                        <h:outputLabel value="Catégorie :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.categorie}"/>
+                        <p:inputText id="categorie" value="#{adminBeanVoiture.voiture.categorie}"/>
+
+                        <h:outputLabel value="Année :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.anneeDeSortie}" />
+                        <p:inputText id="annee" value="#{adminBeanVoiture.voiture.anneeDeSortie}" />
+
+                        <h:outputLabel value="Prix :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.prix}" />
+                        <p:inputText id="prix" value="#{adminBeanVoiture.voiture.prix}" />
+
+                    </h:panelGrid>
+                </p:outputPanel>
+                <br/>
+                <p:commandButton update="growl" value="Modifier" actionListener="#{adminBeanVoiture.modifVoiture()}" oncomplete="PF('modifvoiture').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Suppression de Voiture" widgetVar="supprvoiture" showEffect="bounce" hideEffect="explode">
+            <h:form id="formSuppr">
+                <p:outputPanel id="carSuppr" style="text-align:center;">
+                    <h:panelGrid  columns="2" cellpadding="5">
+
+                        <h:outputLabel value="Id :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.id}" />
+
+
+                        <h:outputLabel value="Marque :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.marque}" />
+
+
+                        <h:outputLabel value="Modèle :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.modele}"/>
+
+
+                        <h:outputLabel value="Image :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.backdrop}" />
+
+
+                        <h:outputLabel value="Motorisation :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.motorisation}" />
+
+
+                        <h:outputLabel value="Puissance :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.puissance}" />
+
+
+                        <h:outputLabel value="Catégorie :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.categorie}"/>
+
+
+                        <h:outputLabel value="Année :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.anneeDeSortie}" />
+
+
+                        <h:outputLabel value="Prix :" />
+                        <p:outputLabel value="#{adminBeanVoiture.selectedVoiture.prix}" />
+
+
+                    </h:panelGrid>
+                </p:outputPanel>
+                <br/>
+                <p:commandButton update="growl" value="Supprimer" actionListener="#{adminBeanVoiture.supprVoiture()}" oncomplete="PF('supprvoiture').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Ajout de voiture" widgetVar="ajoutvoiture" showEffect="bounce" hideEffect="explode" height="400" width="500">
+            <h:form>
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <h:outputLabel value="Marque :"/>
+                    <p:inputText id="marque" value="#{adminBeanVoiture.voiture.marque}" required="true"/>
+
+                    <h:outputLabel value="Modèle :"/>
+                    <p:inputText id="modele" value="#{adminBeanVoiture.voiture.modele}" required="true"/>
+
+                    <h:outputLabel value="Backdrop (image) :"/>
+                    <p:inputText id="backdrop" value="#{adminBeanVoiture.voiture.backdrop}" required="true"/>
+
+                    <h:outputLabel value="Motorisation :"/>
+                    <p:inputText id="motorisation" value="#{adminBeanVoiture.voiture.motorisation}" required="true"/>
+
+                    <h:outputLabel value="Puissance :"/>
+                    <p:inputText id="puissance" value="#{adminBeanVoiture.voiture.puissance}" required="true"/>
+
+                    <h:outputLabel value="Catégorie :"/>
+                    <p:inputText id="categorie" value="#{adminBeanVoiture.voiture.categorie}" required="true"/>
+
+                    <h:outputLabel value="Année :"/>
+                    <p:inputText id="annee" value="#{adminBeanVoiture.voiture.anneeDeSortie}" required="true"/>
+
+                    <h:outputLabel value="Prix :"/>
+                    <p:inputText id="prix" value="#{adminBeanVoiture.voiture.prix}" required="true"/>
+
+                </h:panelGrid>
+                <br/>
+                <p:commandButton update="growl" value="Ajouter" actionListener="#{adminBeanVoiture.ajoutVoiture()}" oncomplete="PF('ajoutvoiture').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

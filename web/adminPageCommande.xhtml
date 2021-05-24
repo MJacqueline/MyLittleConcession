@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Angel Mechanics Admin Page</title>
+    </h:head>
+
+    <h:body>
+        <p:growl id="growl" showDetail="true" life="3000" />
+        <h:form id="form">
+
+            <p:panel>   
+                <center><h1>Bienvenue Hiérarque</h1></center>
+            </p:panel>   
+            <br/>
+
+            <center>
+
+                <h:panelGrid columns="3" cellpadding="5">
+
+                    <p:button value="Gestion Voiture" outcome="adminPageVoiture"/>
+                    <p:button value="Gestion Commande" outcome="adminPageCommande"/>
+                    <p:button value="Déconnexion" outcome="index"/>
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="3" cellpadding="5">
+
+                    <p:commandButton value="Ajouter Commande" type="button" onclick="PF('ajoutcommande').show();" />
+
+                    <p:commandButton value="Modifier Commande" onclick="PF('modifcommande').show();" process="commandesTable" update=":formmodif:commandeDetail"/>
+
+                    <p:commandButton value="Supprimer Commande" onclick="PF('supprcommande').show();" process="commandesTable" update=":formSuppr:commandeSuppr"/>
+
+                </h:panelGrid>
+
+
+
+            </center>
+
+
+
+            <p:panel header="Option de filtrage" style="margin-bottom:10px;">
+
+                <h:panelGrid columns="9" cellpadding="5">
+
+                    <p:outputLabel for="date"  value="Date : " />
+                    <p:selectOneMenu id="date" value="#{adminBeanCommande.date}" style="width:150px">  
+                        <p:ajax listener="#{adminBeanCommande.onDateChange()}" update="commandesTable"/>
+                        <f:selectItem itemLabel="Tous" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{adminBeanCommande.dates}" />  
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+
+            </p:panel>
+
+            <p:panel>                    
+                <p:dataTable id="commandesTable" var="commande" value="#{adminBeanCommande.commandes}" rows="5" paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" selection="#{adminBeanCommande.selectedCommande}" rowKey="#{commande.id}">
+
+                    <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                    <p:column headerText="Id :" width="130">
+                        <h:outputText value="#{commande.id}"/>
+                    </p:column>
+                    <p:column headerText="Date :" width="250" sortBy="#{commande.dates}">
+                        <h:outputText value="#{commande.dates}"/>
+                    </p:column>
+                    <p:column headerText="Voiture :" width="250" sortBy="#{commande.voiture.marque}">
+                        <h:outputText value="#{commande.voiture.marque} #{commande.voiture.modele}"/>
+                    </p:column>
+                    <p:column headerText="Client :" width="250" sortBy="#{commande.client.nom}">
+                        <h:outputText value="#{commande.client.nom} #{commande.client.prenom}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+
+        <p:dialog header="Ajout de commande" widgetVar="ajoutcommande" showEffect="bounce" hideEffect="explode" height="800">
+            <h:form>
+
+                <p:panel>                    
+                    <p:dataTable id="clientsTable" var="client" value="#{adminBeanClient.clients}" rows="5" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" selection="#{adminBeanCommande.selectedClient}" rowKey="#{client.id}">
+
+                        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                        <p:column headerText="Nom :" width="250" sortBy="#{client.nom}">
+                            <h:outputText value="#{client.nom}"/>
+                        </p:column>
+                        <p:column headerText="Prénom :" width="130">
+                            <h:outputText value="#{client.prenom}"/>
+                        </p:column>
+                        <p:column headerText="Age :" width="300">
+                            <h:outputText value="#{client.age}"/>
+                        </p:column>
+                        <p:column headerText="Adresse :" sortBy="#{client.adresse}" width="350">
+                            <h:outputText value="#{client.adresse}"/>
+                        </p:column>
+                        <p:column headerText="Login :" sortBy="#{client.login}" width="110">
+                            <h:outputText value="#{client.login}"/>
+                        </p:column>
+                        <p:column headerText="Mot de Passe :" sortBy="#{client.mdp}">
+                            <h:outputText value="#{client.mdp}"/>
+                        </p:column>
+                        <p:column headerText="Administrateur :" sortBy="#{client.administrator}">
+                            <h:outputText value="#{client.administrator}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:panel>
+
+                <p:panel>                    
+                    <p:dataTable id="voituresTable" var="voiture" value="#{userBean.voitures}" rows="5" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" selection="#{adminBeanCommande.selectedVoiture}" rowKey="#{voiture.id}">
+
+                        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                        <p:column headerText="Marque" width="250" sortBy="#{voiture.marque}">
+                            <h:outputText value="#{voiture.marque}"/>
+                        </p:column>
+                        <p:column headerText="Modèle" width="130">
+                            <h:outputText value="#{voiture.modele}"/>
+                        </p:column>
+                        <p:column headerText="Image" width="300">
+                            <h:graphicImage value="#{voiture.backdrop}" width="100%" height="100%"/>
+                        </p:column>
+                        <p:column headerText="Motorisation" sortBy="#{voiture.motorisation}" width="350">
+                            <h:outputText value="#{voiture.motorisation}"/>
+                        </p:column>
+                        <p:column headerText="Puissance (ch)" sortBy="#{voiture.puissance}" width="110">
+                            <h:outputText value="#{voiture.puissance}"/>
+                        </p:column>
+                        <p:column headerText="Catégorie" sortBy="#{voiture.categorie}">
+                            <h:outputText value="#{voiture.categorie}"/>
+                        </p:column>
+                        <p:column headerText="Année" sortBy="#{voiture.anneeDeSortie}">
+                            <h:outputText value="#{voiture.anneeDeSortie}"/>
+                        </p:column>
+                        <p:column headerText="Prix (en €)" sortBy="#{voiture.prix}">
+                            <h:outputText value="#{voiture.prix}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:panel>
+
+                <br/>
+                <p:commandButton update="growl" value="Ajouter" actionListener="#{adminBeanCommande.ajoutCommande()}" oncomplete="PF('ajoutcommande').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Suppression de Commande" widgetVar="supprcommande" showEffect="bounce" hideEffect="explode" >
+            <h:form id="formSuppr">
+                <p:outputPanel id="commandeSuppr" style="text-align:center;">
+                    <h:panelGrid  columns="2" cellpadding="5">
+
+                        <h:outputLabel value="Id :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.id}" />
+
+                        <h:outputLabel value="Client :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.client.nom}#{adminBeanCommande.selectedCommande.client.prenom}" />
+
+                        <h:outputLabel value="Voiture :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.voiture.marque}#{adminBeanCommande.selectedCommande.voiture.modele}" />
+
+                        <h:outputLabel value="Date :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.dates}" />
+
+                    </h:panelGrid>
+                </p:outputPanel>
+                <br/>
+                <p:commandButton update="growl" value="Supprimer" actionListener="#{adminBeanCommande.supprCommande()}" oncomplete="PF('supprcommande').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Modification de Commande" widgetVar="modifcommande" showEffect="bounce" hideEffect="explode" height="800">
+            <h:form id="formmodif">
+                <p:outputPanel id="commandeDetail" style="text-align:center;">
+                    <h:panelGrid  columns="3" cellpadding="5">
+
+                        <h:outputLabel value="Id :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.id}" />
+                        <p:inputText id="Id" value="#{adminBeanCommande.commande.id}"/>
+
+                        <h:outputLabel value="Date :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.dates}" />
+                        <p:calendar id="date" value="#{adminBeanCommande.commande.dates}" showOn="button" />
+
+                        <h:outputLabel value="Client :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.client.nom}#{adminBeanCommande.selectedCommande.client.prenom}"/>
+                        <p:panel>                    
+                            <p:dataTable id="clientsTable" var="client" value="#{adminBeanClient.clients}" rows="5" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15" selection="#{adminBeanCommande.selectedClient}" rowKey="#{client.id}">
+
+                                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                <p:column headerText="Nom :" width="250" sortBy="#{client.nom}">
+                                    <h:outputText value="#{client.nom}"/>
+                                </p:column>
+                                <p:column headerText="Prénom :" width="130">
+                                    <h:outputText value="#{client.prenom}"/>
+                                </p:column>
+                                <p:column headerText="Age :" width="300">
+                                    <h:outputText value="#{client.age}"/>
+                                </p:column>
+                                <p:column headerText="Adresse :" sortBy="#{client.adresse}" width="350">
+                                    <h:outputText value="#{client.adresse}"/>
+                                </p:column>
+                                <p:column headerText="Login :" sortBy="#{client.login}" width="110">
+                                    <h:outputText value="#{client.login}"/>
+                                </p:column>
+                                <p:column headerText="Mot de Passe :" sortBy="#{client.mdp}">
+                                    <h:outputText value="#{client.mdp}"/>
+                                </p:column>
+                                <p:column headerText="Administrateur :" sortBy="#{client.administrator}">
+                                    <h:outputText value="#{client.administrator}"/>
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </p:panel>
+
+                        <h:outputLabel value="Voiture :" />
+                        <p:outputLabel value="#{adminBeanCommande.selectedCommande.voiture.marque}#{adminBeanCommande.selectedCommande.voiture.modele}" />
+
+                        <p:panel>                    
+                            <p:dataTable id="voituresTable" var="voiture" value="#{userBean.voitures}" rows="5" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15" selection="#{adminBeanCommande.selectedVoiture}" rowKey="#{voiture.id}">
+
+                                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                <p:column headerText="Marque" width="250" sortBy="#{voiture.marque}">
+                                    <h:outputText value="#{voiture.marque}"/>
+                                </p:column>
+                                <p:column headerText="Modèle" width="130">
+                                    <h:outputText value="#{voiture.modele}"/>
+                                </p:column>
+                                <p:column headerText="Image" width="300">
+                                    <h:graphicImage value="#{voiture.backdrop}" width="100%" height="100%"/>
+                                </p:column>
+                                <p:column headerText="Motorisation" sortBy="#{voiture.motorisation}" width="350">
+                                    <h:outputText value="#{voiture.motorisation}"/>
+                                </p:column>
+                                <p:column headerText="Puissance (ch)" sortBy="#{voiture.puissance}" width="110">
+                                    <h:outputText value="#{voiture.puissance}"/>
+                                </p:column>
+                                <p:column headerText="Catégorie" sortBy="#{voiture.categorie}">
+                                    <h:outputText value="#{voiture.categorie}"/>
+                                </p:column>
+                                <p:column headerText="Année" sortBy="#{voiture.anneeDeSortie}">
+                                    <h:outputText value="#{voiture.anneeDeSortie}"/>
+                                </p:column>
+                                <p:column headerText="Prix (en €)" sortBy="#{voiture.prix}">
+                                    <h:outputText value="#{voiture.prix}"/>
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </p:panel>
+
+                    </h:panelGrid>
+                </p:outputPanel>
+                <br/>
+                <p:commandButton update="growl" value="Modifier" actionListener="#{adminBeanCommande.modifCommande()}" oncomplete="PF('modifcommande').hide();">
+                    <p:ajax update="form" />
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

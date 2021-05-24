@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Angel Mechnics</title>
+    </h:head>
+
+    <h:body>
+        <p:growl id="growl" showDetail="true" life="3000" />
+        <h:form>
+
+            <p:panel>   
+                <center><h1>Bienvenue chez Angel Mechanics</h1></center>
+            </p:panel>   
+            <br/>
+
+
+            <center>
+                <h:panelGrid columns="1" cellpadding="5">
+
+                    <p:commandButton value="Connexion" type="button" onclick="PF('dlg3').show();" />
+                    <p:button value="Inscription" outcome="inscription"/>
+
+
+                </h:panelGrid>
+            </center>
+
+        </h:form>
+
+        <p:dialog header="Connexion" widgetVar="dlg3" showEffect="bounce" hideEffect="explode" height="150" width="500">
+            <h:form>
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <h:outputLabel value="Login :"/>
+                    <p:inputText id="login" value="#{login.username}" required="true"/>
+
+                    <h:outputLabel value="Mot de Passe :"/>
+                    <p:password id="password" value="#{login.password}" required="true"/>
+
+                </h:panelGrid>
+                <br/>
+                <p:commandButton update="growl" value="Connexion"  actionListener="#{login.onClick()}"/>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>
+
